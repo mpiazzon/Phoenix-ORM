@@ -1,0 +1,24 @@
+The Phoenix ORM is an open-source library for PHP programming language.
+
+You can find more information at the Phoenix ORM website at http://phoenix.cygnuslab.com.ar
+
+
+Configuration / Setup
+---------------------------------------
+
+include 'Db.php';
+include 'Model.php';		
+
+Db::configure('host','localhost');
+Db::configure('username','root');
+Db::configure('password','');
+Db::configure('name','database_name_here');
+Db::configure('type','mysql');
+
+Model::register('models/');
+
+
+A basic example
+---------------------------------------
+$post = Posts::find(1);
+echo $post->title;

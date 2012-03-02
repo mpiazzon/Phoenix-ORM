@@ -1,0 +1,8 @@
+"field:titulo ; type:required ; msg:el campo title no puede estar vacio",
+           "field:titulo ; type:length ; range:3-15 ; msg: El titulo debe tener entre 3 y 15 caracteres",
+           "field:titulo ; type:email ; msg:email requerido",
+           "field:titulo ; type:number ; msg:debe ser numero",
+           "field:titulo ; type:url ; msg:debe ser url",
+           "field:titulo ; type:unique ; msg:el campo esta repetido",
+           "field:titulo ; type:format ; pattern:/^M(.*)/ ; msg:formato incorrecto",
+           "field:titulo ; type:custom ; funcion()",

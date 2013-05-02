@@ -7,8 +7,8 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-require_once 'Db.php';
 
+require_once 'Db.php';
 require_once 'Validation.php';
 
 class Model implements Iterator
@@ -38,15 +38,15 @@ class Model implements Iterator
 
 	public function __construct(array $attributes = array())
 	{
-		
+
 		$this->_query = '';
         $this->_position = 0;
         $this->_executed = false;
-		
+
 		if (method_exists($this , 'init')) {
 			$this->init();
 		}
-		
+
 		$this->tableName = $this->_getTableName();
 		$this->db = Db::factory();
 		$this->_fields = $this->_describeTable($this->tableName);
@@ -105,7 +105,7 @@ class Model implements Iterator
 			$fields[$col['field']]['extra'] = $col['extra'];
 			$fields[$col['field']]['default'] = $col['default'];
 		}
-		
+
 		return $fields;
 	}
 
@@ -128,7 +128,7 @@ class Model implements Iterator
 				$opts['model'] = $name;
 			if (!isset($opts['fk']))
 				$opts['fk'] = get_class($this).$this->_foreignKey;
-			
+
 			return $this->_hasMany($opts['model'] , $opts['fk']);
 		}
 
@@ -140,7 +140,7 @@ class Model implements Iterator
 				$opts['model'] = $name;
 			if (!isset($opts['fk']))
 				$opts['fk'] = $name.$this->_foreignKey;
-			
+
 			return $this->_belongsTo($opts['model'] , $opts['fk']);
 		}
 
@@ -152,13 +152,13 @@ class Model implements Iterator
 				$opts['model'] = $name;
 			if (!isset($opts['fk']))
 				$opts['fk'] = get_class($this).$this->_foreignKey;
-			
+
 			return $this->_hasOne($opts['model'] , $opts['fk']);
 		}
 
 		if (array_key_exists($name , $this->_manyToMany)) {
 			$opts = self::getOptions($this->_manyToMany[$name]);
-			
+
 			return $this->_manyToMany($opts['model'] , $opts['fk'] , $opts['key'] , $opts['through']);
 		}
 	}
@@ -177,9 +177,9 @@ class Model implements Iterator
 		// si es un atributo que representa una relacion hasMany lo prepara
 		if ((in_array($name , $this->_hasMany)) OR (array_key_exists($name , $this->_hasMany))) {
 			$this->_toDo[$name]['values'] = $value;
-			
+
 			$opts = self::getOptions($this->_hasMany[$name]);
-	
+
 			if (!isset($opts['model']))
 				$opts['model'] = $name;
 			if (!isset($opts['fk']))
@@ -189,19 +189,19 @@ class Model implements Iterator
 		// si es un atributo que representa una relacion hasOne lo prepara
 		if ((in_array($name , $this->_hasOne)) OR (array_key_exists($name , $this->_hasOne))) {
 			$this->_toDo[$name]['values'] = $value;
-			
+
 			$opts = self::getOptions($this->_hasMany[$name]);
-	
+
 			if (!isset($opts['model']))
 				$opts['model'] = $name;
 			if (!isset($opts['fk']))
 				$opts['fk'] = get_class($this).$this->_foreignKey;
-			
+
 			$this->_toDo[$name]['has_one'] = $opts;
 		}
-		
-	}	
-	
+
+	}
+
 	/**
 	 * Retorna el nombre de la tabla asociada al modelo
 	 * Ejemplo, si modelo es TipoAuto lo convierte en  tipo_auto.
@@ -215,7 +215,7 @@ class Model implements Iterator
 		return $this->_tableName;
 	}
 
-	
+
 	/**
 	 * retora instancia
 	 * recibe nombre de la clase o array para crear nuevo registro
@@ -225,8 +225,8 @@ class Model implements Iterator
 		if (($param == '') or (is_array($param)))
 			$className = get_called_class();
 		else
-			$className = $param;		
-		
+			$className = $param;
+
 		if (is_array($param))
 			return new $className($param);
 		else
@@ -273,7 +273,7 @@ class Model implements Iterator
 			$this->_new = false;
 			$this->_attributes[$this->_primaryKey] = $av[$this->_primaryKey];
 		}
-		
+
 		if ($param == false)
 			$this->_valid = true;
 
@@ -289,60 +289,60 @@ class Model implements Iterator
 						array_push($keys , $this->_updatedFieldname);
 						array_push($values , date('Y-m-d H:i:s'));
 					}
-				
+
 					// before save
-					if (method_exists($this, "beforeSave")) { 
+					if (method_exists($this, "beforeSave")) {
 						if ($this->beforeSave() == 'cancel') {
                 			return false;
             			}
-					}	
-				
+					}
+
 				if ($this->db->insert($this->tableName , $keys , $values)) {
 					$this->_lastId =  $this->db->lastInsertId();
-					
+
 					// after save
-					if (method_exists($this, "afterSave")) { 
+					if (method_exists($this, "afterSave")) {
 						if ($this->afterSave() == 'cancel') {
                 			return false;
             			}
 					}
-				}	
-				
+				}
+
 			} else {
 				$where = $this->_primaryKey." = ".$this->_attributes[$this->_primaryKey];
 				$dirty = array_intersect_key($av , $this->_dirtyAttributes);
 				if (isset($this->_fields[$this->_updatedFieldname]))
 					if (!isset($dirty[$this->_updatedFieldname]))
 						$dirty[$this->_updatedFieldname] = date('Y-m-d H:i:s');
-					
+
 				if (count($dirty) > 0) {
 					$keys = array_keys($dirty);
 					$values = array_values($dirty);
-					
-					// before update	
-					if (method_exists($this, "beforeUpdate")) { 
+
+					// before update
+					if (method_exists($this, "beforeUpdate")) {
 						if ($this->beforeUpdate() == 'cancel') {
                 			return false;
             			}
-					}		
+					}
 
 					$this->db->update($this->tableName , $keys , $values , $where);
 
-					// after update	
-					if (method_exists($this, "afterUpdate")) { 
+					// after update
+					if (method_exists($this, "afterUpdate")) {
 						if ($this->afterUpdate() == 'cancel') {
                 			return false;
             			}
-					}	
+					}
 				}
 			}
-		}	
+		}
 	}
 
 	public function delete()
 	{
-		// before delete	
-		if (method_exists($this, "beforeDelete")) { 
+		// before delete
+		if (method_exists($this, "beforeDelete")) {
 			if ($this->beforeDelete() == 'cancel') {
             	return false;
             }
@@ -351,8 +351,8 @@ class Model implements Iterator
 		$where = $this->_primaryKey." = ".$this->_attributes[$this->_primaryKey];
 		$this->db->delete($this->tableName , $where);
 
-		// after delete	
-		if (method_exists($this, "afterDelete")) { 
+		// after delete
+		if (method_exists($this, "afterDelete")) {
 			if ($this->afterDelete() == 'cancel') {
             	return false;
             }
@@ -377,9 +377,9 @@ class Model implements Iterator
 
 		if (is_array($result))
 			foreach ($result as $k => $r)
-				if (!is_numeric($k)) 
+				if (!is_numeric($k))
 					$obj->_attributes[$k] = stripslashes($r);
-		
+
 		return $obj;
 	}
 
@@ -399,7 +399,7 @@ class Model implements Iterator
 		return $arr;
 	}
 
-	
+
 	/*
 	 * usado internamente
 	 *
@@ -433,13 +433,13 @@ class Model implements Iterator
 		return $this;
 	}
 
-	
+
 	/* -----------------------------------------
 	 * metodos estaticos para entontrar objetos
 	 * -----------------------------------------
 	 *
 	 */
-	
+
 	static public function first()
 	{
 		$model = self::factory();
@@ -475,13 +475,13 @@ class Model implements Iterator
 		$query = "SELECT * FROM ".Model::sqlSanizite($model->tableName);
 		if (func_num_args() > 1) {
 			$args = implode("," , func_get_args());
-			$query .= " WHERE (id IN  (" .$args. "))"; 	
+			$query .= " WHERE (id IN  (" .$args. "))";
 			$results = $model->db->inQuery($query);
 			$r = array();
 			foreach ($results as $result)
 				$r[] = $model->dumpResult($result);
 			return $r;
-		} else {	
+		} else {
 			if (is_int($opts))
 				$query .= " where $model->_primaryKey = $opts";
 
@@ -512,7 +512,7 @@ class Model implements Iterator
 		if (is_array($opts)) {
 			if (array_key_exists('where' , $opts))
 				$query .= " WHERE ".$opts['where'];
-			
+
 			if (array_key_exists('order_by' , $opts))
 				$query .= " ORDER BY ".$opts['order_by'];
 			if (array_key_exists('group_by' , $opts))
@@ -562,7 +562,7 @@ class Model implements Iterator
 	 * -----------------------------------------
 	 *
 	 */
-	
+
 	public function findOne()
 	{
 		$this->_executed = true;
@@ -677,10 +677,10 @@ class Model implements Iterator
 			$av = array_intersect_key($this->_attributes , $this->_fields);
 			$validator = Validation::factory($this->_rules,$av,get_class($this));
 			if (!$validator->getStatus())
-				$this->_errors = $validator->getErrors(); 
+				$this->_errors = $validator->getErrors();
 
-			return $validator->getStatus();	
-		}	
+			return $validator->getStatus();
+		}
 	}
 
 
@@ -708,19 +708,19 @@ class Model implements Iterator
         {
         	$cont = 1;
         	$oc = explode("?",$args[0]);
-        	foreach ($oc as $value) 
+        	foreach ($oc as $value)
         	{
         		if ($value != '')
-        		{	
+        		{
         			$q .= $value . "'".addslashes($args[$cont])."'";
         			$cont++;
         		}
         	}
-       	}	
+       	}
 		$this->_sql['where'] = $q;
         return $this;
     }
-	
+
 	public function orderBy($param)
     {
         $this->_sql['order_by'] = " ORDER BY $param";
@@ -732,32 +732,32 @@ class Model implements Iterator
         $this->_sql['limit'] = " LIMIT $param";
         return $this;
     }
-    
+
     public function offset($results)
     {
         $this->_sql['offset'] = " OFFSET $param";
         return $this;
     }
-    
+
     public function __toString()
     {
         return $this->_query;
     }
-    
+
     public function __invoke()
     {
         $query = (string) $this->__toString();
         //echo "Executing $query";
         $this->_position = 0;
 		$this->_executed = true;
-		return $this->_queryResults;	
+		return $this->_queryResults;
     }
-    
+
     public function isExecuted()
     {
         return $this->_executed;
     }
-    
+
     public function execQuery()
     {
     	$query = "SELECT ";
@@ -768,8 +768,8 @@ class Model implements Iterator
 		if (isset($this->_sql['from']))
 			$query .= $this->_sql['from'];
 		else
-			$query .= "FROM " . Model::sqlSanizite($this->tableName)." ";		
-			
+			$query .= "FROM " . Model::sqlSanizite($this->tableName)." ";
+
 		if (isset($this->_sql['where']))
     		$query .= "WHERE " .$this->_sql['where'];
 
@@ -778,10 +778,10 @@ class Model implements Iterator
 
     	if (isset($this->_sql['limit']))
     		$query .= $this->_sql['limit'];
-    	
+
     	if (isset($this->_sql['offset']))
-    		$query .= $this->_sql['offSet'];		
-        
+    		$query .= $this->_sql['offSet'];
+
         $this->_position = 0;
         $this->_executed = true;
         $results = $this->db->inQuery($query);
@@ -791,12 +791,12 @@ class Model implements Iterator
 		} else {
 			foreach ($results as $result)
 				$r[] = $this->dumpResult($result);
-		
+
 
 			$this->_queryResults =  $r;
 		}
     }
-    
+
     public function rewind()
     {
         if (!$this->isExecuted()) {
@@ -804,22 +804,22 @@ class Model implements Iterator
         }
         $this->_position = 0;
     }
-    
+
     public function current()
     {
         return $this->_queryResults[$this->_position];
     }
-    
+
     public function key()
     {
         return $this->_position;
     }
-    
+
     public function next()
     {
         ++$this->_position;
     }
-    
+
     public function valid()
     {
         return isset($this->_queryResults[$this->_position]);

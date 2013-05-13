@@ -1,0 +1,63 @@
+<p>convenciones</p>
+
+-- nombre del archivo y de la clase en mayuscula
+
+
+protected $_tableName = "";
+protected $_createdFieldname = ""; // created_at
+protected $_updatedFieldname = ""; // updated_at
+protected $_primaryKey             // id
+protected $_foreignKey             // _id
+
+
+<p>obtener registros</p>
+devuelve 1 elemento:
+
+	find(1)
+	findByAtributo
+	first
+
+devuelve + 1 elemento:
+
+	find(2,3);
+	all/findAll
+	allbyAtributo/findAllByAtributo
+
+
+where limit offset etc
+
+min();
+max();
+avg();
+sum();
+count();
+
+
+<p>Validaciones</p>
+
+<p>Filtros</p>
+
+<p>callbacks</p>
+
+	before_save: called before a model is saved
+	before_create: called before a NEW model is to be inserted into the database
+	before_update: called before an existing model has been saved
+	before_validation: called before running validators
+	before_validation_on_create: called before validation on a NEW model being inserted
+	before_validation_on_update: same as above except for an existing model being saved
+	before_destroy: called after a model has been deleted
+
+	after_save: called after a model is saved
+	after_create: called after a NEW model has been inserted into the database
+	after_update: called after an existing model has been saved
+	after_validation: called after running validators
+	after_validation_on_create: called after validation on a NEW model being inserted
+	after_validation_on_update: same as above except for an existing model being saved
+	after_destroy: called after a model has been deleted
+
+
+<p>Eager Loading</p>
+
+<p>paginacion</p>
+
+

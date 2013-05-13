@@ -2,7 +2,7 @@
 
 require_once 'PdoInterface.php';
 
-abstract class DbPDO extends DbBase implements PDOInterface  
+abstract class DbPDO extends PhoDbBase implements PDOInterface
 {
 
 	protected $pdo;
@@ -10,7 +10,7 @@ abstract class DbPDO extends DbBase implements PDOInterface
 	public $pdoStatement;
 
 	protected $_lastQuery;
-	
+
 	protected $_lastError;
 
 	protected $_affectedRows;
@@ -20,7 +20,7 @@ abstract class DbPDO extends DbBase implements PDOInterface
 	const DB_BOTH = PDO::FETCH_BOTH;
 
 	const DB_NUM = PDO::FETCH_NUM;
-	
+
 	public function connect($config)
 	{
 
@@ -67,7 +67,7 @@ abstract class DbPDO extends DbBase implements PDOInterface
 	}
 
 	public function exec($sqlQuery)
-	{	
+	{
 		if(!$this->pdo){
 			throw new Exception('No hay conexión para realizar esta acción');
 		}
@@ -77,12 +77,12 @@ abstract class DbPDO extends DbBase implements PDOInterface
 			$result = $this->pdo->exec($sqlQuery);
 			$this->_affectedRows = $result;
 			if($result===false){
-				throw new Exception($this->error(" al ejecutar <em>\"$sql_query\"</em>"));
+				throw new Exception($this->error("$sqlQuery"));
 			}
 			return $result;
 		}
 		catch(PDOException $e) {
-			throw new Exception($this->error(" al ejecutar <em>\"$sql_query\"</em>"));
+			throw new Exception($this->error("$sqlQuery"));
 		}
 	}
 
@@ -142,7 +142,7 @@ abstract class DbPDO extends DbBase implements PDOInterface
 			$error = "";
 		}
 		$this->_lastError.= $error." [".$err."]";
-       
+
 		return $this->_lastError;
 	}
 
@@ -182,7 +182,7 @@ abstract class DbPDO extends DbBase implements PDOInterface
 		}
 	}
 
-	public function update($table, $fields, $values, $whereCondition=null)
+	public function update($table, $fields, $values, $whereCondition = NULL)
 	{
 		$values = $this->addQuotes($values);
 		$updateSql = "UPDATE $table SET ";
@@ -197,7 +197,7 @@ abstract class DbPDO extends DbBase implements PDOInterface
 		}
 		$updateSql.= join(',', $updateValues);
 		if($whereCondition!=null){
-			$updateSql.= " WHERE $where_condition";
+			$updateSql.= " WHERE $whereCondition";
 		}
 		return $this->exec($updateSql);
 	}
@@ -205,7 +205,7 @@ abstract class DbPDO extends DbBase implements PDOInterface
 	public function delete($table, $whereCondition)
 	{
 		if($whereCondition){
-			return $this->exec("DELETE FROM $table WHERE $where_condition");
+			return $this->exec("DELETE FROM $table WHERE $whereCondition");
 		} else {
 			return $this->exec("DELETE FROM $table");
 		}

@@ -19,10 +19,10 @@ Model::register('models/');
 $entradas = Entradas::factory()
 	->where('titulo = ?', 'martin')
   	->limit(2)
-  	->orderBy('id','desc')
+  	->orderBy('id desc')
   	->findMany();
- 
-if (count($entradas) > 0)  
+
+if (count($entradas) > 0)
 	foreach ($entradas as $entrada)
 		echo $entrada->id.'<br>';
 
@@ -31,5 +31,5 @@ if (count($entradas) > 0)
 $entradas = Entradas::findAll();
 foreach ($entradas as $entrada)
 	echo $entrada->titulo.'<br>';
-*/	
+*/
 ?>

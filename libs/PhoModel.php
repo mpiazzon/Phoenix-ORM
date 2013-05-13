@@ -11,7 +11,7 @@
 require_once 'PhoDb.php';
 require_once 'PhoValidation.php';
 
-class Model implements Iterator
+class PhoModel implements Iterator
 {
 	static protected $_config = array();
 	static protected $_autoLoad = true;
@@ -24,8 +24,8 @@ class Model implements Iterator
 	protected        $_new = true;
 	protected        $_sql = array();
 	protected        $_fields = array();
-	protected        $_updatedFieldname = 'updated_at';
 	protected        $_createdFieldname = 'created_at';
+	protected        $_updatedFieldname = 'updated_at';
 	protected        $_hasMany = array();
 	protected        $_belongsTo = array();
 	protected        $_hasOne = array();
@@ -48,7 +48,7 @@ class Model implements Iterator
 		}
 
 		$this->tableName = $this->_getTableName();
-		$this->db = Db::factory();
+		$this->db = PhoDb::factory();
 		$this->_fields = $this->_describeTable($this->tableName);
 		foreach ($attributes as $attribute => $value) {
 			$this->_attributes[$attribute] = $value;
@@ -65,7 +65,7 @@ class Model implements Iterator
 	static public function register($modelsDir = 'models/')
 	{
 		self::$_config['models_dir'] = $modelsDir;
-		spl_autoload_register('Model::loadClass');
+		spl_autoload_register('PhoModel::loadClass');
 	}
 
 	/**
@@ -78,11 +78,11 @@ class Model implements Iterator
 	{
 		$class = ucfirst($class);
 		if (!class_exists($class)) {
-			if (Model::$_autoLoad == true) {
-				if (is_file(Model::$_config['models_dir'].$class.'.php')) {
-					require_once (Model::$_config['models_dir'].$class.'.php');
+			if (PhoModel::$_autoLoad == true) {
+				if (is_file(PhoModel::$_config['models_dir'].$class.'.php')) {
+					require_once (PhoModel::$_config['models_dir'].$class.'.php');
 				} else {
-					die(Model::$_config['models_dir'].$class.'.php no se encontro');
+					echo (PhoModel::$_config['models_dir'].$class.'.php not found.');
 				}
 			}
 		}
@@ -267,7 +267,6 @@ class Model implements Iterator
 
 		$keys = array_keys($av);
 		$values = array_values($av);
-
 		if (in_array($this->_primaryKey , $keys)) {
 			$this->_new = false;
 			$this->_attributes[$this->_primaryKey] = $av[$this->_primaryKey];
@@ -471,7 +470,7 @@ class Model implements Iterator
 	{
 		$model = self::factory();
 		$model->_executed = true;
-		$query = "SELECT * FROM ".Model::sqlSanizite($model->tableName);
+		$query = "SELECT * FROM ".PhoModel::sqlSanizite($model->tableName);
 		if (func_num_args() > 1) {
 			$args = implode("," , func_get_args());
 			$query .= " WHERE (id IN  (" .$args. "))";
@@ -746,7 +745,6 @@ class Model implements Iterator
     public function __invoke()
     {
         $query = (string) $this->__toString();
-        //echo "Executing $query";
         $this->_position = 0;
 		$this->_executed = true;
 		return $this->_queryResults;

@@ -1,0 +1,92 @@
+falta coneccion sin pdo
+
+
+Conventions
+
+-- nombre del archivo y de la clase en mayuscula
+
+*
+
+
+Eloquent makes a few basic assumptions about your database structure:
+
+    Each table should have a primary key named id.
+     Ejemplo, si modelo es TipoAuto lo convierte en  tipo_auto.
+
+
+Sometimes you may wish to use a table name other than the plural form of your model. No problem. Just add a static table property your model:
+
+class User extends Eloquent {
+
+     public static $table = 'my_users';
+
+}
+
+
+$users = User::all();
+
+foreach ($users as $user)
+{
+     echo $user->email;
+}
+
+$user = User::where('email', '=', $email)->first();
+
+$user = User::where_email($email)->first();
+
+---------------
+Eager Loading
+-----------------
+
+Eager loading exists to alleviate the N + 1 query problem. Exactly what is this problem? Well, pretend each Book belongs to an Author. We would describe this relationship like so:
+
+$books = Book::with(array('author', 'author.contacts'))->get();
+
+
+-----------------
+query builder
+-----------------
+
+
+$query = DB::table('users');
+
+$user = DB::table('users')->find($id);
+
+$email = DB::table('users')->where('id', '=', 1)->only('email');
+
+$user = DB::table('users')->distinct()->get();
+
+return DB::table('users')
+    ->where('id', '=', 1)
+    ->or_where('email', '=', 'example@gmail.com')
+    ->first();
+
+
+
+
+--------------------------------
+- En findAll faltan offset etc
+- En distinct tambien faltan offset etc
+
+- Ver como generalizar el codigo que se repite mucho
+	if (is_array($opts)) {
+			if (array_key_exists('where' , $opts))
+				$query .= " WHERE ".$opts['where'];
+			if (array_key_exists('order_by' , $opts))
+				$query .= " ORDER BY ".$opts['order_by'];
+			if (array_key_exists('group_by' , $opts))
+				$query .= " GROUP BY ".$opts['group_by'];
+			if (array_key_exists('limit' , $opts))
+				$query .= " LIMIT ".$opts['limit'];
+		})
+
+- Revisar findOne and findMany
+
+- Terminar validaciones
+
+-
+
+------------------------------------
+
+
+agregar paginacion

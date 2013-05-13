@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-class Validation
+class PhoValidation
 {
 	protected $_errors = array();
 
